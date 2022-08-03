@@ -30,7 +30,7 @@ This package is used in combo with user_interface, that is used to show to the u
   ```
   colcon build
   ```
-6. esecute
+6. execute
   ```
   source install/setup.bash
   ```
@@ -52,7 +52,7 @@ This package is used in combo with user_interface, that is used to show to the u
   ```
     ros2 run user_interface ui
   ```
-  Setting the variable DEMO_MODE to true inside robots_control/src/control.h before starting everithing can be useful if the user just want to test the moving    functions of robots_control
+  Setting the variable DEMO_MODE to true inside robots_control/src/control.h before starting everything can be useful if the user just want to test the moving    functions of robots_control
 
   
   
