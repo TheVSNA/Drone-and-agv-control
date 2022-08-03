@@ -1,0 +1,3 @@
+[submodule "Planning-drones-ROS2"]
+	path = Planning-drones-ROS2
+	url = https://github.com/jvj00/Planning-drones-ROS2.git
