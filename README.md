@@ -16,14 +16,14 @@ This package is used in combo with user_interface, that is used to show to the u
 
 # Installation
 1. Install ROS2 and PX4 following their installation instructions
-2. It may be necessary to install the following libraries (if not already installed):
-  ..* OpenCV2 and cv_bridge (for C++)
-  ..* Matplotlib (Python)
-  ..* mpl_toolkits  (Python)
-  ..* numpy (Python)
-  ..* rclpy (Python)
-  ..* PIL (Python)
-  ..* requests  (Python)
+2. It may be necessary to install the following libraries (if not already installed): 
+..* OpenCV2 and cv_bridge (for C++)
+..* Matplotlib (Python)  
+..* mpl_toolkits  (Python)
+..* numpy (Python)
+..* rclpy (Python)
+..* PIL (Python)
+..* requests  (Python)
 3. Clone this repository
 4. Follow [Planning-drones-ROS2 readme.md](https://github.com/jvj00/Planning-drones-ROS2) for a correct setup of that module
 5. build all the packages using the command 
