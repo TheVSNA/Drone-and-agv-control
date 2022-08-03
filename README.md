@@ -15,7 +15,7 @@ This package is used in combo with user_interface, that is used to show to the u
 
 # Installation
 1. Install ROS2 and PX4 following their installation instructions
-2. It may be neceeeary to install the following libraries (if not already installed):
+2. It may be necessary to install the following libraries (if not already installed):
   * OpenCV2 and cv_bridge (for C++)
   * Matplotlib (Python)
   * mpl_toolkits  (Python)
