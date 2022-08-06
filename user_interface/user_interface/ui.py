@@ -1,3 +1,10 @@
+## This program is used to show to the user a map of the area we want to research in, allowing the insertion of points to indicate a particular spot on the map that a vehicle must check.
+#  Once that the user has inserted enough points, he / she can use the "Run" button to send all the locations to the planning service, that will calculate all the necessary actions that every vehicle must perform
+#  in order to accomplish the mission.
+#  When this actions are returned to this program, it proceeds on publishing them on the "/ui" service, that communicate with robots_control.
+#  The it listens on the "/ret" topic, waiting for the control package to publish information about the last position of every vehicle, that are once again sent to the planning service that calculate the return path 
+#  for each vehicle.
+
 from distutils.spawn import spawn
 from turtle import distance
 from mpl_toolkits.basemap import Basemap
@@ -36,13 +43,16 @@ spawn_lat = 46.06875
 spawn_lon = 11.17530556
 spawn_height = 472.0    #mslm
 
+# position of the spawn point in meters wrt the center of the map
+spawn_x = -700.0
+spawn_y = 700.0
+
 research_area_x = 3500  #m
 research_area_y = 3500  #m
 
 ##@class  MinimalClientAsync
 # @brief This class is used to communicate with the planning service.
 # This class is used to send the list of all the desidered target to the planning service so that it can calculate all the actions to exeute
-
 class MinimalClientAsync(Node):
     ##@brief Function to initialize the class.
     # This function keep on trying to connect to its Service counterpart until the connection is established
@@ -249,7 +259,6 @@ def button_callback(event):
         if(len(target_list)==0):
             print("Please insert at least one point to the map!")
         else:
-            #time.sleep(5)
             temp = 0
             myjson={    #create json to send
                 "coordinates":{
@@ -285,7 +294,7 @@ def button_callback(event):
             #get all intermediate point from planning service
             temp = json.loads(response.out_json)["actions"]
 
-            
+            #convert each point from the frame of reference based on the bottom left point on the map to the frame of reference based on the spawn point
             for i in range(len(temp)):
                 temp[i]["x"] , temp[i]["y"] = temp[i]["y"] , temp[i]["x"]
                 temp[i]["x"] -= distance_origin_spawn_y
@@ -342,9 +351,8 @@ def main(args=None):
     plt.annotate("Starting location",(x_spawn,y_spawn))
 
     global distance_origin_spawn_x, distance_origin_spawn_y
-    #distance_origin_spawn_x, distance_origin_spawn_y = xyDistance(origin_position_lat,spawn_lat,origin_position_lon,spawn_lon)
-    distance_origin_spawn_x = research_area_x/2.0 -700.0
-    distance_origin_spawn_y = research_area_y/2.0 + 700.0 
+    distance_origin_spawn_x = research_area_x/2.0 + spawn_x
+    distance_origin_spawn_y = research_area_y/2.0 + spawn_y 
 
     global x_start,y_start  #calculate origin position from longitude and latitude
     x_start,y_start =m(origin_position_lon,origin_position_lat)

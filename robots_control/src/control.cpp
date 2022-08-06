@@ -1,3 +1,13 @@
+/**
+ * The purpose of this program is to control a set of drones and agv to inspect an area with the purpose of finding the victims of a natural disaster.
+ * This program consists of a series of functions that control a vehicle allowing the robot to perform different actions, like takeoff, landing, take pictures, rotate on the spot and move 
+ * (the last one is for both drone and agv).
+ * The program receive a series of actions to be performed through the topic "/ui". Once this information are received the function ui_callback store them in arrays so this information can be used later on.
+ * The function proceed then on sending through the topic "/ret" the last position of each vehicle so that it can be used by external services to calculate the return path for each vehicle.
+ * Once that both the forward and the return path are received by the program, it proceed on executing all the received actions.
+ * An action consists of an action id (1 = move drone, 2 = move rover, 3 = takeoff, 4 = landing, 5 = take photo), the id of the vehicle that will perform the action, destination position (x,y,z) wrt the starting location
+ **/
+
 #include "control.h"
 
 std::shared_ptr<rclcpp::Node> node_publisher_drone[NDRONE],node_subscriber_drone[NDRONE],node_image[NDRONE],node_depth[NDRONE]; /*<Variables that will create all the publishers and subscriber for the drones.*/
@@ -363,12 +373,9 @@ void get_depth(int droneid){
     rclcpp::spin_some(node_depth[droneid]);
 }
 
-std::list<int> drone_action[NDRONE], rover_action[NROVER];
+std::list<int> drone_action[NDRONE], rover_action[NROVER];  /*!<Lists used to store all the action that a vehicle will perform (takeoff, land, move and take picture). */
 std::list<float> drone_x[NDRONE],drone_y[NDRONE],drone_z[NDRONE];
-std::list<float> rover_x[NDRONE],rover_y[NDRONE],rover_z[NDRONE];
-
-//std::list<int> drone_0_action, drone_1_action, rover_action;    /*!<Lists used to store all the action that a vehicle will perform (takeoff, land, move and take picture). */
-//std::list<float> drone_0_x,drone_1_x,rover_x, drone_0_y,drone_1_y,rover_y,drone_0_z,drone_1_z,rover_z;  /*<Lists used to store the positions at which the action will be performed */
+std::list<float> rover_x[NDRONE],rover_y[NDRONE],rover_z[NDRONE];   /*<Lists used to store the positions at which the action will be performed */
 
 /**
  * Function that send all the necessary commands to a rover so that it can perform its mission.
@@ -428,10 +435,10 @@ void perform_mission_rover(int roverid){
         double dist_from_dest=DOUBLE_MAX;
         int cont =0;
 
-        if(action_dest==2){ //actio==2 means move rover at coodrinates
+        if(action_dest==2){ //action==2 means move rover at coordinates
             do{ 
                 odom_callback_rover(roverid);
-                dist_from_dest=sqrt(((x_rover[roverid]-x_dest)*(x_rover[roverid]-x_dest))+((y_rover[roverid]-y_dest)*(y_rover[roverid]-y_dest))/*+((z_rover[roverid]-z_dest)*(z_rover[roverid]-z_dest))*/);   //calculate distance from target
+                dist_from_dest=sqrt(((x_rover[roverid]-x_dest)*(x_rover[roverid]-x_dest))+((y_rover[roverid]-y_dest)*(y_rover[roverid]-y_dest)));   //calculate distance from target
                 #if DEBUG_MODE
                     std::cout<<"distance from target:"<<dist_from_dest<<std::endl;
                     print_pos_rover();
@@ -658,12 +665,6 @@ void perform_mission_drone(int droneid){
             case 5:{    //move to destination, take photo, turn 180 degrees, take photo
                 try{
                     odom_callback_drone(droneid);   //get position wrt the start location
-                    
-                    //position_drone(droneid,x,y,z,PI);
-                    /*delay(4000);
-                    get_depth(droneid); //get distance from terrain
-                    double new_z = -z_drone[droneid] - z_sensor[droneid] + 5.0;  //calculate the height wrt the starting location that is 5 meters above the ground in the point that the drone is.
-                    std::cout<<"Distance from terrain: "<<z_sensor[droneid]<<" height from spawn: "<<-z_drone[droneid]<<" target height: "<<new_z<<"\n";*/
                     position_drone(droneid,x,y,z,PI);
                     delay(2000);
                     get_image(droneid);
@@ -690,50 +691,29 @@ void perform_mission_drone(int droneid){
  * Function to perform a demo of all the actions that the drones and the rover can perform.
  **/
 void perform_demo(){
-    /*drone_action[0].push_back(3);    //takeoff drone 0
+    drone_action[0].push_back(3);    //takeoff drone 0
     drone_x[0].push_back(0.0);
     drone_y[0].push_back(0.0);
     drone_z[0].push_back(221.0);
 
-    
-    drone_action[0].push_back(1);
-    drone_x[0].push_back(-350.0);
-    drone_y[0].push_back(-350.0);
-    drone_z[0].push_back(152.0);
-
-    drone_action[0].push_back(1);
-    drone_x[0].push_back(-700.0);
-    drone_y[0].push_back(0.0);
-    drone_z[0].push_back(228.0);
-
-    drone_action[0].push_back(1);
-    drone_x[0].push_back(-1050.0);
-    drone_y[0].push_back(350.0);
-    drone_z[0].push_back(314.0);
-    
-    drone_action[0].push_back(5);
-    drone_x[0].push_back(-1345.0);
-    drone_y[0].push_back(631.0);
-    drone_z[0].push_back(467.0);*/
-
-    /*drone_action[1].push_back(3);    //takeoff drone 1
+    drone_action[1].push_back(3);    //takeoff drone 1
     drone_x[1].push_back(0.0);
     drone_y[1].push_back(0.0);
-    drone_z[1].push_back(40.0);*/
+    drone_z[1].push_back(40.0);
 
 
-   /* drone_action[0].push_back(1);    //move drone 0
+    drone_action[0].push_back(1);    //move drone 0
     drone_x[0].push_back(0.0);
     drone_y[0].push_back(40.0);
-    drone_z[0].push_back(40.0);*/
+    drone_z[0].push_back(40.0);
     
-    /*drone_action[1].push_back(1);    //move drone 1
+    drone_action[1].push_back(1);    //move drone 1
     drone_x[1].push_back(0.0);
     drone_y[1].push_back(40.0);
-    drone_z[1].push_back(40.0);*/
+    drone_z[1].push_back(40.0);
     
 
-   /* drone_action[0].push_back(1);    //move drone 0
+    drone_action[0].push_back(1);    //move drone 0
     drone_x[0].push_back(100.0);
     drone_y[0].push_back(70.0);
     drone_z[0].push_back(20.0);
@@ -741,28 +721,28 @@ void perform_demo(){
     drone_action[1].push_back(1);    //move drone 1
     drone_x[1].push_back(100.0);
     drone_y[1].push_back(70.0);
-    drone_z[1].push_back(20.0);*/
+    drone_z[1].push_back(20.0);
 
     
-    /*drone_action[0].push_back(5);    //take photo drone 0
+    drone_action[0].push_back(5);    //take photo drone 0
     drone_x[0].push_back(110.0);
     drone_y[0].push_back(45.0);
-    drone_z[0].push_back(40.0);*/
+    drone_z[0].push_back(40.0);
     
-    /*drone_action[1].push_back(5);    //take photo drone 1
+    drone_action[1].push_back(5);    //take photo drone 1
     drone_x[1].push_back(110.0);
     drone_y[1].push_back(45.0);
-    drone_z[1].push_back(40.0);*/
+    drone_z[1].push_back(40.0);
 
-   /* drone_action[0].push_back(4);    //land drone 0
+    drone_action[0].push_back(4);    //land drone 0
     drone_x[0].push_back(110.0);
     drone_y[0].push_back(45.0);
-    drone_z[0].push_back(0.0);*/
+    drone_z[0].push_back(0.0);
     
-   /* drone_action[1].push_back(4);    //land drone 1
+    drone_action[1].push_back(4);    //land drone 1
     drone_x[1].push_back(110.0);
     drone_y[1].push_back(45.0);
-    drone_z[1].push_back(0.0);*/
+    drone_z[1].push_back(0.0);
 
     rover_action[0].push_back(2);  //move rover
     rover_x[0].push_back(-350.0);
@@ -779,12 +759,12 @@ void perform_demo(){
 
     std::cout<<"Drone 0: # commands: "<<drone_action[0].size()<<"\nDrone 1: # commands: "<<drone_action[1].size()<<"\nRover: # commands: "<<rover_action[0].size()<<"\n";
     //start all the missions
-    //std::thread mission0(perform_mission_drone,0);  
-    //std::thread mission1(perform_mission_drone,1);
+    std::thread mission0(perform_mission_drone,0);  
+    std::thread mission1(perform_mission_drone,1);
     std::thread mission2(perform_mission_rover,0);
 
-    //mission0.join();
-    //mission1.join();
+    mission0.join();
+    mission1.join();
     mission2.join();
 }
 
