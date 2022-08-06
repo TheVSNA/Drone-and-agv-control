@@ -195,7 +195,7 @@ void takeoff_drone(int droneid,double z){
             cont =0;
             print_pos_drone(droneid);
         }
-	}while(dist_from_dest>TARGET_PRECISION);    //keep sen/ding command until it's close enough to destination
+	}while(dist_from_dest>TARGET_PRECISION_DRONE);    //keep sen/ding command until it's close enough to destination
     std::cout<<"Drone "<<droneid<<": takeoff sent\n";
 }
 
@@ -268,7 +268,7 @@ void position_drone(int droneid,double x_dest,double y_dest,double z_dest,double
             cont=0;
             print_pos_drone(droneid);
         }
-	}while(dist_from_dest>TARGET_PRECISION);
+	}while(dist_from_dest>TARGET_PRECISION_DRONE);
     std::cout<<"Drone "<<droneid<<": arrived at destination\n";
 }
 
@@ -459,7 +459,7 @@ void perform_mission_rover(int roverid){
                     cont=0;
                     print_pos_rover(0);
                 }
-            }while(dist_from_dest>1.5);
+            }while(dist_from_dest>TARGET_PRECISION_ROVER);
             firsttime = false;
         }else{  //the planner service returned a wrong id
             std::cout<<"Errore action != 2\n";

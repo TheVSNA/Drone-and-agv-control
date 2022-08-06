@@ -41,7 +41,8 @@ using namespace px4_msgs::msg;
 
 #define DOUBLE_MAX 1.79769e+308
 #define PI 3.141592654
-#define TARGET_PRECISION 0.3
+#define TARGET_PRECISION_DRONE 0.3
+#define TARGET_PRECISION_ROVER 1.5
 #define DEBUG_MODE false
 #define TEST_MODE false
 #define DEMO_MODE true
